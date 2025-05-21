@@ -8,13 +8,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SensorData extends Model
 {
     
-    protected $fillable = ['room_id', 'sensor_type', 'value', 'is_alert'];
+    protected $fillable = [
+        'room_id',
+        'temperature',
+        'humidity',
+        'co',
+        'air_quality',
+        'dust',
+        'status',
+        'reading_at'
+    ];
 
     public $timestamps = false;
-
+    
     public function Room(): BelongsTo {
         return $this -> belongsTo(Room::class);
     }
-
-    
 }

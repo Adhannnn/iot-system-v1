@@ -6,6 +6,8 @@ use App\Events\SensorDataReceived;
 use Illuminate\Console\Command;
 use PhpMqtt\Client\ConnectionSettings;
 use PhpMqtt\Client\MqttClient;
+use App\Models\SensorData;
+use Illuminate\Support\Carbon;
 
 class MqttSubscriber extends Command
 {
@@ -30,20 +32,40 @@ class MqttSubscriber extends Command
         $this->info("✅ Connected to MQTT Broker at {$server}:{$port}");
 
         $mqtt->subscribe("room/1/sensor", function ($topic, $message) {
-            $this->info("📩 Message on {$topic}: {$message}");
+            try {
+                $this->info("📩 Message on {$topic}: {$message}");
+                $payload = json_decode($message, true);
 
-            $payload = json_decode($message, true);
+                if (!$payload) {
+                    $this->error("❌ JSON decode failed");
+                    return;
+                }
 
-            if ($payload && isset($payload['room_id']) && isset($payload['sensorData'])) {
-                $roomId = $payload['room_id'];
-                $sensorData = $payload['sensorData'];
+                if (isset($payload['room_id'], $payload['sensorData'])) {
+                    $roomId = $payload['room_id'];
+                    $sensorData = $payload['sensorData'];
+                    $status = $payload['status'] ?? 'normal';
 
-                // 🚀 Broadcast ke frontend
-                event(new SensorDataReceived($roomId, $sensorData));
+                    $this->info("Saving sensor data for room {$roomId}...");
+                    SensorData::create([
+                        'room_id' => $roomId,
+                        'temperature' => $sensorData['dht22']['temperature'] ?? null,
+                        'humidity' => $sensorData['dht22']['humidity'] ?? null,
+                        'co' => $sensorData['mq7']['co'] ?? null,
+                        'air_quality' => $sensorData['mq135']['air_quality'] ?? null,
+                        'dust' => $sensorData['dust']['dust'] ?? null,
+                        'status' => $status,
+                        'reading_at' => now(),
+                    ]);
+                    $this->info("Saved successfully.");
 
-                $this->info("📡 Broadcasted SensorDataReceived for room {$roomId}");
-            } else {
-                $this->error("❌ Invalid payload: {$message}");
+                    event(new SensorDataReceived($roomId, $sensorData));
+                    $this->info("Broadcasted event for room {$roomId}.");
+                } else {
+                    $this->error("❌ Invalid payload structure");
+                }
+            } catch (\Throwable $e) {
+                $this->error("❌ Exception: " . $e->getMessage());
             }
         }, 0);
 

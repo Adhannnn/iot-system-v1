@@ -14,23 +14,19 @@ return new class extends Migration
         Schema::create('sensor_data', function (Blueprint $table) {
             $table -> id();
             $table -> foreignId('room_id') -> constrained() -> onDelete('cascade');
-            $table -> enum('sensor_type', [
-                'temperature', // Dht 22
-                'humidity', // Dht 22
-                'co', // MQ 7
-                'air_quality', // MQ 135
-                'dust_density' // GP2Y1010AU0F
-            ]);
-            $table -> float('value');
+            
+            $table -> float('temperature') -> nullable(); // DHT22
+            $table -> float('humidity') -> nullable(); // DHT22
+            $table -> float('co') -> nullable(); // MQ7
+            $table -> float('air_quality') -> nullable(); // MQ135
+            $table -> float('dust') -> nullable(); // Dust Sensor
 
-            // Flag if detect smoke or fire
-            $table -> boolean('is_alert') -> default(false);
 
+            // Status of the condition
+            $table -> enum('status', ['normal', 'smoke', 'fire']) -> default('normal'); // Status of the sensor
+            
             // Time
             $table -> timestamp('reading_at') -> useCurrent();
-
-            // Index for faster query
-            $table -> index(['room_id', 'sensor_type']);
         });
     }
 
