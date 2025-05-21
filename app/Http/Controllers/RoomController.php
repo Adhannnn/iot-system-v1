@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Livewire\Livewire;
 
 class RoomController extends Controller
 {
@@ -38,6 +39,8 @@ class RoomController extends Controller
     }
 
     public function show(Room $room) {
-        return view('livewire.components.room-show', ['roomId' => $room -> id]);
+        return Livewire::mount('components.room-show', [
+            'roomId' => $room -> id
+        ]);
     }
 }

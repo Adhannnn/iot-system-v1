@@ -36,7 +36,7 @@
             <main class="flex-1 overflow-y-auto p-6">
                 {{ $slot ?? '' }}
                 @if (isset($room))
-                    <livewire:components.room-show :roomId="$room -> id" />
+                    <livewire:components.room-show :room-id="$roomId" />
                 @else
                     <livewire:components.room-show />
                 @endif

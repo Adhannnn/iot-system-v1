@@ -5,7 +5,6 @@ namespace App\Livewire\Components;
 use Livewire\Component;
 use App\Models\Room;
 
-
 class RoomShow extends Component
 {
     public $room;
@@ -17,11 +16,24 @@ class RoomShow extends Component
         'name' => 'required|string|unique:rooms,name'
     ];
 
+    // Static Livewire events
     protected $listeners = [
-        'SensorDataReceived' => 'handleReceivedData',
         'loadRoom' => 'loadRoom',
-        'room-selected' => 'loadRoom'
+        'room-selected' => 'loadRoom',
+        'SensorDataReceived' => 'handleReceivedData'
     ];
+
+    // Dynamic Echo channel listener
+    public function getListeners()
+    {
+        $baseListeners = $this->listeners;
+
+        if ($this->roomId) {
+            $baseListeners["echo:room.{$this->roomId},SensorDataReceived"] = 'handleReceivedData';
+        }
+
+        return $baseListeners;
+    }
 
     public function mount($roomId = null)
     {
@@ -34,10 +46,31 @@ class RoomShow extends Component
             }
         }
     }
-    public function handleReceivedData($sensorData)
-    {
 
-        $this->sensorData = $sensorData;
+    public function handleReceivedData($payload)
+    {
+        if (!isset($payload['roomId']) || $payload['roomId'] != $this->roomId) {
+            return;
+        }
+
+        $this->sensorData = [
+            'dht22' => [
+                'temperature' => $payload['sensorData']['dht22']['temperature'] ?? null,
+                'humidity' => $payload['sensorData']['dht22']['humidity'] ?? null,
+            ],
+            'mq7' => [
+                'co' => $payload['sensorData']['mq7']['co'] ?? null,
+            ],
+            'mq135' => [
+                'air_quality' => $payload['sensorData']['mq135']['air_quality'] ?? null,
+            ],
+            'dust' => [
+                'dust' => $payload['sensorData']['dust']['dust'] ?? null,
+            ],
+        ];
+
+        // Trigger update di browser (Livewire.on)
+        $this->dispatch('sensor-data-updated', $this->sensorData);
     }
 
     public function loadRoom($roomId)
@@ -46,17 +79,15 @@ class RoomShow extends Component
         $this->room = Room::find($roomId);
         $this->sensorData = [];
 
-        $this->dispatch('subscribeToRoomChannel', ['roomId' => $roomId]);
+        // Notify frontend to resubscribe to new room
+        $this->dispatch('subscribeToRoom', $roomId);
     }
 
     public function addRoom()
     {
         $this->validate();
-
         Room::create(['name' => $this->name]);
-
         $this->reset('name');
-
         $this->dispatch('room-added-success');
     }
 
