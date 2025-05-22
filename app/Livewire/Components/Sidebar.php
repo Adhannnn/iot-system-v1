@@ -26,7 +26,7 @@ class Sidebar extends Component
     public function selectRoom($roomId)
     {
         $this->currentRoomId = $roomId;
-        $this->dispatch('load-room', $roomId)->to(ContentSwitcher::class);
+        $this->dispatch('load-room', $roomId);
     }
 
     public function goToSettings()

@@ -101,6 +101,8 @@
 
 @push('scripts')
     <script>
+        console.log("Room : ")
+
         let previousStatus = 'normal';
 
         document.getElementById('deleteRoomForm').addEventListener('submit', function(event) {

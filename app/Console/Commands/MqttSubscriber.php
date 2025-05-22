@@ -31,7 +31,7 @@ class MqttSubscriber extends Command
 
         $this->info("✅ Connected to MQTT Broker at {$server}:{$port}");
 
-        $mqtt->subscribe("room/1/sensor", function ($topic, $message) {
+        $mqtt->subscribe("IoT/group8", function ($topic, $message) {
             try {
                 $this->info("📩 Message on {$topic}: {$message}");
                 $payload = json_decode($message, true);

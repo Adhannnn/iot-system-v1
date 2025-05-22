@@ -20,6 +20,7 @@ class RoomShow extends Component
     // Static Livewire events
     protected $listeners = [
         'loadRoom' => 'loadRoom',
+        'load-room' => 'loadRoom',
         'room-selected' => 'loadRoom',
         'SensorDataReceived' => 'handleReceivedData'
     ];
