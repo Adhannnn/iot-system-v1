@@ -59,7 +59,7 @@ class MqttSubscriber extends Command
                     ]);
                     $this->info("Saved successfully.");
 
-                    event(new SensorDataReceived($roomId, $sensorData));
+                    event(new SensorDataReceived($roomId, $sensorData, $status));
                     $this->info("Broadcasted event for room {$roomId}.");
                 } else {
                     $this->error("❌ Invalid payload structure");

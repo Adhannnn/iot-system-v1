@@ -11,6 +11,7 @@ class RoomShow extends Component
     public $roomId;
     public $name;
     public $sensorData = [];
+    public $status = 'normal';
 
     protected $rules = [
         'name' => 'required|string|unique:rooms,name'
@@ -49,10 +50,22 @@ class RoomShow extends Component
 
     public function handleReceivedData($payload)
     {
-        if (!isset($payload['roomId']) || $payload['roomId'] != $this->roomId) {
+        if (!$this->isValidRoom($payload)) {
             return;
         }
 
+        $this->processSensorData($payload);
+        $this->processStatus($payload);
+        $this->dispatchUpdates();
+    }
+
+    protected function isValidRoom($payload): bool
+    {
+        return isset($payload['roomId']) && $payload['roomId'] == $this->roomId;
+    }
+
+    protected function processSensorData($payload): void
+    {
         $this->sensorData = [
             'dht22' => [
                 'temperature' => $payload['sensorData']['dht22']['temperature'] ?? null,
@@ -68,9 +81,17 @@ class RoomShow extends Component
                 'dust' => $payload['sensorData']['dust']['dust'] ?? null,
             ],
         ];
+    }
 
-        // Trigger update di browser (Livewire.on)
+    protected function processStatus($payload): void
+    {
+        $this->status = $payload['status'] ?? 'normal';
+    }
+
+    protected function dispatchUpdates(): void
+    {
         $this->dispatch('sensor-data-updated', $this->sensorData);
+        $this->dispatch('status-indicator-update', status: $this->status);
     }
 
     public function loadRoom($roomId)

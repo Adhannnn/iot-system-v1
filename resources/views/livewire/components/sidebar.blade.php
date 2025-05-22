@@ -36,22 +36,22 @@
 
             <!-- Settings -->
             <div class="w-full border-t border-gray-200 pt-4 mt-4">
-                {{-- <button wire:click="$emit('room-selected', { url: '{{ route('settings') }}' })"
+                {{-- <a href="{{ route('settings') }}"
                     class="flex items-center w-full px-4 py-2 text-sm rounded hover:bg-gray-100 transition
-                    {{ request()->routeIs('settings') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-800' }}">
-                    <svg class="w-5 h-5 mr-2 stroke-current text-gray-600" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {{ request()->routeIs('settings') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-800' }}">
+                    <svg class="w-5 h-5 mr-2 stroke-current {{ request()->routeIs('settings') ? 'text-blue-700' : 'text-gray-600' }}"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                     </svg>
                     Settings
-                </button> --}}
+                </a> --}}
             </div>
+
         </div>
 
-        {{-- <!-- Log Out -->
-        <a class="flex items-center justify-center w-full h-16 mt-auto hover:bg-gray-100 cursor-pointer"
-            x-data
+        <!-- Log Out -->
+        <a class="flex items-center justify-center w-full h-16 mt-auto hover:bg-gray-100 cursor-pointer" x-data
             @click.prevent="
                 confirmLogout
             ">
@@ -61,12 +61,12 @@
                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             <span class="ml-2 text-sm font-medium">Log Out</span>
-        </a> --}}
+        </a>
 
-        {{-- <!-- Hidden logout form -->
+        <!-- Hidden logout form -->
         <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
             @csrf
-        </form> --}}
+        </form>
 
         <!-- Modal -->
         <div x-data="{ open: false }" @open-add-room.window="open = true" x-show="open" x-cloak

@@ -19,11 +19,13 @@ class SensorDataReceived implements ShouldBroadcast {
 
     public $sensorData;
     public $roomId;
+    public $status;
 
-    public function __construct(int $roomId, array $sensorData)
+    public function __construct(int $roomId, array $sensorData, string $status = 'normal')
     {
         $this -> roomId = $roomId;
         $this -> sensorData = $sensorData;
+        $this -> status = $status;
     }
 
     /**
@@ -43,7 +45,8 @@ class SensorDataReceived implements ShouldBroadcast {
     public function broadcastWith() {
         return [
             'roomId' => $this -> roomId,
-            'sensorData' => $this -> sensorData
+            'sensorData' => $this -> sensorData,
+            'status' => $this -> status,
         ];
     }
 }

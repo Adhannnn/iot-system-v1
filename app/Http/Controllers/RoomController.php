@@ -43,4 +43,10 @@ class RoomController extends Controller
             'roomId' => $room -> id
         ]);
     }
+
+    public function destroy(Room $room)
+    {
+        $room->delete();
+        return redirect()->back()->with('success', 'Room deleted successfully.');
+    }
 }

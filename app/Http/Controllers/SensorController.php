@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SensorData;
+use App\Models\Room;
+use App\Exports\SensorDataExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SensorController extends Controller
 {
-    public function store(Request $request) {
-        $data = $request -> json() -> all();
+    public function store(Request $request)
+    {
+        $data = $request->json()->all();
 
         $sensor = $data['sensorData'] ?? [];
 
@@ -29,10 +33,17 @@ class SensorController extends Controller
             'reading_at' => now(),
         ]);
 
-        return response() -> json([
+        return response()->json([
             'status' => 'success',
             'message' => 'Sensor data saved successfully.',
             'data' => $reading,
         ]);
+    }
+
+    public function export(Room $room)
+    {
+        $filename = "sensor_data_room_{$room->id}_" . now()->format('Ymd_His') . ".xlsx";
+
+        return Excel::download(new SensorDataExport($room->id), $filename);
     }
 }
