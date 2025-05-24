@@ -9,16 +9,16 @@ class RoomPolicy
 {
     public function view(User $user, Room $room)
     {
-        return $user->id === $room->user_id; // Contoh cek owner
+        return $user->id === $room->user_id; // Check owner
     }
 
     public function export(User $user, Room $room)
     {
-        return $user->id === $room->user_id; // hanya owner boleh export
+        return $user->id === $room->user_id; // Just the owner can export
     }
 
     public function delete(User $user, Room $room)
     {
-        return $user->id === $room->user_id; // hanya owner boleh delete
+        return $user->id === $room->user_id; // Just owner can delete 
     }
 }

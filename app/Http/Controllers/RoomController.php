@@ -17,12 +17,12 @@ class RoomController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input
+        // Input room validation
         $validated = $request->validate([
             'name' => 'required|string|unique:rooms,name|max:255',
         ]);
 
-        // Simpan data ke database
+        // Save room
         $room = Room::create($validated);
 
         $sensorTypes = ["dht22", "mq7", "mq135", "dust"];
@@ -34,7 +34,7 @@ class RoomController extends Controller
             Log::info("Topic Created " . $topic);
         }
 
-        // Redirect kembali dengan pesan sukses
+        // Not use this btw
         return redirect()->back()->with('success', 'Room added successfully.');
     }
 

@@ -10,6 +10,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class SensorController extends Controller
 {
+
+    // Store sensor data
+
     public function store(Request $request)
     {
         $data = $request->json()->all();
